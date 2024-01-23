@@ -1,3 +1,5 @@
+// The controller wires up all the components and workers together, 
+// managing the dependencies. A kind of "DI" class. 
 const worker = new Worker('model-worker.js');
 
 const messagesArea = document.querySelector('messages-area');
