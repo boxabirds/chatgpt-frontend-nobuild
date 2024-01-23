@@ -1,0 +1,36 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Colors */
+:root {
+    --red: #ff0000;
+    --green: #00ff00;
+    --margin: 10px;
+    --padding: 10px;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 10px 0;
+    font-weight: normal;
+}
+
+p {
+    margin: 0 0 10px 0;
+}
+
+
+#appContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+messages-area {
+    flex-grow: 1;
+    overflow: auto;
+}
