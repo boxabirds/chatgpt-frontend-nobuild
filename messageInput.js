@@ -27,7 +27,28 @@ class MessageInput extends HTMLElement {
         super();
         const shadowRoot = this.attachShadow({mode: 'open'});
         shadowRoot.appendChild(messageInputTemplate.content.cloneNode(true));
+
+        this._messageInputField = shadowRoot.querySelector('#messageInputField');
+        this._sendButton = shadowRoot.querySelector('#sendButton');
+
+        this._messageInputField.addEventListener('keydown', this._handleKeyDown.bind(this));
+        this._sendButton.addEventListener('click', this._handleClick.bind(this));
+    }
+
+    _handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            this._dispatchMessageEvent();
+        }
+    }
+
+    _handleClick() {
+        this._dispatchMessageEvent();
+    }
+
+    _dispatchMessageEvent() {
+        const messageEvent = new CustomEvent('message', { detail: this._messageInputField.value });
+        this.dispatchEvent(messageEvent);
+        this._messageInputField.value = '';
     }
 }
-
 customElements.define('message-input', MessageInput);

@@ -7,9 +7,6 @@
 <body>
     <!-- Your HTML content -->
 
-    <!-- Include the JavaScript files -->
-    <script src="messageInput.js"></script>
-    <script src="messagesArea.js"></script>
 
     <!-- Use the custom tags directly -->
     <div id="appContainer">
@@ -17,6 +14,9 @@
         <message-input></message-input>
     </div>
 
-    <!-- Your HTML content -->
+    <!-- Include the JavaScript files at bottom to avoid blocking UI -->
+    <script src="messageInput.js" defer></script>
+    <script src="messagesArea.js" defer></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
