@@ -1,4 +1,3 @@
-// messagesArea.js
 const messagesAreaTemplate = document.createElement('template');
 messagesAreaTemplate.innerHTML = `
     <style>
@@ -18,6 +17,20 @@ class MessagesArea extends HTMLElement {
         const shadowRoot = this.attachShadow({mode: 'open'});
         shadowRoot.appendChild(messagesAreaTemplate.content.cloneNode(true));
     }
+
+    init(worker) {
+        this.worker = worker;
+    }
+
+    handleTokensDone() {
+        console.log('no more tokens');
+    }
+
+    handleNewToken(token) {
+        console.log('New token:', token);
+        // Add logic to update the messages area with the new token
+    }
+
 }
 
 customElements.define('messages-area', MessagesArea);

@@ -1,4 +1,3 @@
-// messageInput.js
 const messageInputTemplate = document.createElement('template');
 messageInputTemplate.innerHTML = `
     <style>
@@ -7,7 +6,6 @@ messageInputTemplate.innerHTML = `
             justify-content: space-between;
             align-items: center;
             height: 24px;
-            background-color: var(--red);
             margin: var(--margin);
         }
         #messageInputField {
@@ -18,7 +16,7 @@ messageInputTemplate.innerHTML = `
             width: 80px;
         }
     </style>
-    <input type="text" id="messageInputField" placeholder="Type a message...">
+    <input type="text" id="messageInputField" placeholder="" focus="true" autocomplete="off">
     <button id="sendButton">Send</button>
 `;
 
@@ -32,23 +30,31 @@ class MessageInput extends HTMLElement {
         this._sendButton = shadowRoot.querySelector('#sendButton');
 
         this._messageInputField.addEventListener('keydown', this._handleKeyDown.bind(this));
-        this._sendButton.addEventListener('click', this._handleClick.bind(this));
+        this._sendButton.addEventListener('click', this._handleClick.bind(this));        
+    }
+
+    init(worker) {
+        this.worker = worker;
+    }
+
+    handleMessageSent() {
+        this._messageInputField.value = '';
+        this._sendButton.removeAttribute('disabled');
     }
 
     _handleKeyDown(event) {
         if (event.key === 'Enter') {
-            this._dispatchMessageEvent();
+            this._handleNewChatMessage();
         }
     }
 
     _handleClick() {
-        this._dispatchMessageEvent();
+        this._handleNewChatMessage();
     }
 
-    _dispatchMessageEvent() {
-        const messageEvent = new CustomEvent('message', { detail: this._messageInputField.value });
-        this.dispatchEvent(messageEvent);
-        this._messageInputField.value = '';
+    _handleNewChatMessage() {
+        this._sendButton.setAttribute('disabled', 'disabled');
+        this.worker.postMessage({ type: 'chatMessage', message: this._messageInputField.value });
     }
 }
 customElements.define('message-input', MessageInput);
