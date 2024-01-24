@@ -1,6 +1,8 @@
 const MOCK_TOKENS = ['Good', ' morning', ' Mr', ' Plop', 'py', ',', 'and', ' I', ' said',  '\n', '"', 'Good', ' morn', 'ing', ' Mrs',' Plop', 'py', ,'"', '\n', 'Oh', ' how', ' the', ' win', 'ter', ' even', 'ings', ' must', ' just', ' fly'];
 const API_URL = "https://api.openai.com/v1/chat/completions";
 let openaiApiKey;
+let conversationHistory = [];
+let assistantResponseAccumulator = '';
 
 function mockDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,7 +20,6 @@ self.onmessage = async function(event) {
     if (event.data.type === 'init') {
         openaiApiKey = event.data.openaiApiKey;
     } else if (event.data.type === 'chatMessage') {
-        console.log('Received chat message:', event.data.message);
         // MOCK
         if( openaiApiKey === null ) {
             // Simulate sending the message to an HTTP endpoint
@@ -32,6 +33,7 @@ self.onmessage = async function(event) {
 
         // OPENAI
         } else {
+            conversationHistory.push({ role: 'user', content: event.data.message });
             
             const response = await fetch(API_URL, {
                 method: "POST",
@@ -41,7 +43,7 @@ self.onmessage = async function(event) {
                 },
                 body: JSON.stringify({
                     model: "gpt-4-1106-preview",
-                    messages: [{ role: "user", content: event.data.message }],
+                    messages: conversationHistory,
                     stream: true,
                 }),
             });
@@ -52,6 +54,8 @@ self.onmessage = async function(event) {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
+                    conversationHistory.push({ role: 'assistant', content: assistantResponseAccumulator });
+                    assistantResponseAccumulator = '';
                     postMessage({ type: 'tokensDone' });
                     break;
                 }
@@ -69,6 +73,7 @@ self.onmessage = async function(event) {
                     const { content } = delta;
                     // Update the UI with the new content
                     if (content) {
+                        assistantResponseAccumulator += content;
                         postMessage({ type: 'newToken', payload: { token: content } });
                     }
                 }

@@ -64,7 +64,7 @@ class MessageInput extends HTMLElement {
         console.log("handleMessageSent");
         this._messageInputField.value = '';
         this._sendButton.removeAttribute('disabled');
-
+        this._messageInputField.removeAttribute('disabled');
     }
 
     _handleKeyDown(event) {
@@ -78,7 +78,9 @@ class MessageInput extends HTMLElement {
     }
 
     _handleNewChatMessage() {
+        // prevent user from interacting while we're waiting
         this._sendButton.setAttribute('disabled', 'disabled');
+        this._messageInputField.setAttribute('disabled', 'disabled');
         let messageContent = this._messageInputField.value;
         if (this.messagesAreaComponent) {
             this.messagesAreaComponent.appendUserMessage(messageContent);
