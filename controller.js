@@ -10,7 +10,13 @@ const messageInput = document.querySelector('message-input');
 messageInput.init(worker);
 messageInput.setMessagesArea(messagesArea);
 
+const params = new URLSearchParams(window.location.search);
+const openaiApiKey = params.get('openapi-key');
+worker.postMessage({ type: 'init', openaiApiKey: openaiApiKey });
+
+
 // Event listeners for worker messages
+// TODO I'm sure there's a better way to do this
 worker.onmessage = function(event) {
     const { type, payload } = event.data;
     switch (type) {

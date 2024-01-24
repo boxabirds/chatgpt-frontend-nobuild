@@ -1,5 +1,6 @@
 const MOCK_TOKENS = ['Good', ' morning', ' Mr', ' Plop', 'py', ',', 'and', ' I', ' said',  '\n', '"', 'Good', ' morn', 'ing', ' Mrs',' Plop', 'py', ,'"', '\n', 'Oh', ' how', ' the', ' win', 'ter', ' even', 'ings', ' must', ' just', ' fly'];
-const API_URL = "https://api.openai.com/v1/engines/gpt-4-1106-preview/stream";
+const API_URL = "https://api.openai.com/v1/chat/completions";
+let openaiApiKey;
 
 function mockDelay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -14,12 +15,10 @@ async function processMockTokens() {
 }
 
 self.onmessage = async function(event) {
-    if (event.data.type === 'chatMessage') {
+    if (event.data.type === 'init') {
+        openaiApiKey = event.data.openaiApiKey;
+    } else if (event.data.type === 'chatMessage') {
         console.log('Received chat message:', event.data.message);
-
-        const params = new URLSearchParams(window.location.search);
-        const openaiApiKey = params.get('openapi-key');
-
         // MOCK
         if( openaiApiKey === null ) {
             // Simulate sending the message to an HTTP endpoint
@@ -46,18 +45,19 @@ self.onmessage = async function(event) {
                     stream: true,
                 }),
             });
-        
+            postMessage({ type: 'messageSent' });
             const reader = response.body.getReader();
             const decoder = new TextDecoder("utf-8");
-            let resultText = "";
         
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
+                    postMessage({ type: 'tokensDone' });
                     break;
                 }
                 // lots of low-level OpenAI response parsing stuff
                 const chunk = decoder.decode(value);
+                console.log("Received chunk:", chunk);
                 const lines = chunk.split("\n");
                 const parsedLines = lines
                     .map((line) => line.replace(/^data: /, "").trim()) // Remove the "data: " prefix
