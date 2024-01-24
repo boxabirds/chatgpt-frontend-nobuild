@@ -35,6 +35,9 @@ self.onmessage = async function(event) {
         } else {
             conversationHistory.push({ role: 'user', content: event.data.message });
             
+            // https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+            // 4096 output tokens
+            // 128,000 input tokens
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: {
