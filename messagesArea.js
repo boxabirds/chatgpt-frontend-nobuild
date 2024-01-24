@@ -108,7 +108,20 @@ class MessagesArea extends HTMLElement {
         this.messages.scrollTop = this.messages.scrollHeight;
     }
     flushAccumulatingMessage() {
-        this.accumulatingMessageEl = null; // Clear the reference for the next message
+        if (this.accumulatingMessageEl) {
+            // remove all the animation spans and interpret the text as markdown. 
+            let fullText = '';
+            this.accumulatingMessageEl.querySelectorAll('.token').forEach(tokenEl => {
+                fullText += tokenEl.textContent;
+            });
+
+            // Convert Markdown to HTML
+            let htmlText = marked.parse(fullText);
+            console.log("htmlText: "+htmlText);
+            this.accumulatingMessageEl.innerHTML = htmlText;
+
+            this.accumulatingMessageEl = null; // Clear the reference for the next message
+        }
         //this.scrollToBottom();
     }
 }

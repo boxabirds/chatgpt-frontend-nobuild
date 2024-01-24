@@ -57,7 +57,6 @@ self.onmessage = async function(event) {
                 }
                 // lots of low-level OpenAI response parsing stuff
                 const chunk = decoder.decode(value);
-                console.log("Received chunk:", chunk);
                 const lines = chunk.split("\n");
                 const parsedLines = lines
                     .map((line) => line.replace(/^data: /, "").trim()) // Remove the "data: " prefix
