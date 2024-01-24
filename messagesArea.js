@@ -16,6 +16,7 @@ messagesAreaTemplate.innerHTML = `
         }
         .message {
             margin-bottom: var(--margin);
+            line-height: 1.3;
         }
 
         .token {
@@ -74,10 +75,10 @@ class MessagesArea extends HTMLElement {
         this.flushAccumulatingMessage();
     }
 
-    appendUserMessage(messageText) {
+    appendUserMessage(messageText, source="You") {
         console.log("appendUserMessage: "+messageText);
         const header = document.createElement('h2');
-        header.textContent = "You";
+        header.textContent = source;
         this.messages.appendChild(header);
 
         const messageElement = document.createElement('div');

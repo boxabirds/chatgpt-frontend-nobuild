@@ -13,6 +13,11 @@ messageInput.setMessagesArea(messagesArea);
 const params = new URLSearchParams(window.location.search);
 const openaiApiKey = params.get('openapi-key');
 worker.postMessage({ type: 'init', openaiApiKey: openaiApiKey });
+if( openaiApiKey !== null ) {
+    messagesArea.appendUserMessage("Will attempt to connect to OpenAI using API key provided.", source="");
+} else {
+    messagesArea.appendUserMessage("No OpenAI API key provided. Using mock data.", source="");
+}
 
 
 // Event listeners for worker messages
